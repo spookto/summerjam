@@ -30,6 +30,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _change_mode(next: bool) -> void:
 	_hovered_mode = int(clamp(_hovered_mode + (1 if next else -1), Mode.STORY, _max))
+	if Game.is_mobile():
+		if _hovered_mode == Mode.PVP:
+			_change_mode(next)
+			return
 	
 	mode_label.text = Mode.keys()[_hovered_mode]
 	mode_label.text = mode_label.text.replacen("STORY", "TUTORIAL").replace("FREE", "RACE")

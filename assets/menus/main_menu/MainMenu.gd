@@ -28,6 +28,8 @@ func _ready():
 
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventAction or not event.is_action_type():
+		return
 	event.remove_meta(META_INPUT_TWO)
 	if !HardwareInputSource.verify_event(event, player_1_input_slot):
 		if player_2_input_slot != INVALID_INPUT && HardwareInputSource.verify_event(event, player_2_input_slot):

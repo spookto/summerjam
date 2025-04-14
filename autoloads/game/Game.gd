@@ -46,9 +46,11 @@ var _player_2_slot: int = HardwareInputSource.SourceSlot.ALL
 
 var _race_start_time: float = RACE_START_TIME
 var _players_left: int = 10
-
+var _mobile: bool = false
 
 func _ready() -> void:
+	_mobile = OS.get_name() == "Android"
+	
 	randomize()
 	_populate_pickups()
 	
@@ -59,6 +61,10 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	update_character_positions()
 	_update_start_timer(delta)
+
+
+func is_mobile() -> bool:
+	return _mobile
 
 
 func add_player_camera(camera: PlayerCamera) -> void:
