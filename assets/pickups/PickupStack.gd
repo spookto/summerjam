@@ -26,9 +26,7 @@ func _ready():
 
 
 func _process(_delta: float) -> void:
-	var dif: Vector3 = parent.global_position - _last_global_position
-	_last_global_position = parent.global_position
-	global_position = _last_global_position + dif.limit_length(0.1) * 10.0
+	global_position = parent.get_global_transform_interpolated().origin
 	rotation.y = parent.global_rotation.y
 
 
