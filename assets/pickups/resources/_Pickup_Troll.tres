@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://assets/pickups/PickupResource.gd" type="Script" id=1]
+[ext_resource path="res://assets/pickups/pickup_troll.png" type="Texture" id=2]
+
+[resource]
+resource_name = "Troll"
+script = ExtResource( 1 )
+texture = ExtResource( 2 )
+position_bias = 1
+use_logic = "character.stun(2.0)"

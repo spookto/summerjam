@@ -1,0 +1,59 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=2]
+
+[ext_resource path="res://assets/characters/skull/sprites/skull0000.png" type="Texture" id=1]
+[ext_resource path="res://assets/characters/skull/sprites/skull0001.png" type="Texture" id=2]
+[ext_resource path="res://assets/characters/skull/sprites/skull0007.png" type="Texture" id=3]
+[ext_resource path="res://assets/characters/skull/sprites/skull0005.png" type="Texture" id=4]
+[ext_resource path="res://assets/characters/skull/sprites/skull0008.png" type="Texture" id=5]
+[ext_resource path="res://assets/characters/skull/sprites/skull0002.png" type="Texture" id=6]
+[ext_resource path="res://assets/characters/skull/sprites/skull0004.png" type="Texture" id=7]
+[ext_resource path="res://assets/characters/skull/sprites/skull0003.png" type="Texture" id=8]
+[ext_resource path="res://assets/characters/skull/sprites/skull0006.png" type="Texture" id=9]
+
+[resource]
+animations = [ {
+"frames": [ ExtResource( 1 ), ExtResource( 2 ) ],
+"loop": true,
+"name": "default",
+"speed": 6.0
+}, {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "default_l",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 9 ) ],
+"loop": true,
+"name": "default_r",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "drift_l",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 8 ) ],
+"loop": true,
+"name": "drift_r",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "front",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 9 ), ExtResource( 5 ), ExtResource( 3 ), ExtResource( 2 ) ],
+"loop": true,
+"name": "stunned",
+"speed": 8.0
+}, {
+"frames": [ ExtResource( 7 ) ],
+"loop": true,
+"name": "turn_l",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "turn_r",
+"speed": 5.0
+} ]

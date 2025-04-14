@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=4 format=2]
+
+[ext_resource path="res://assets/pickups/PickupResource.gd" type="Script" id=1]
+[ext_resource path="res://assets/pickups/pickup_boost.png" type="Texture" id=2]
+[ext_resource path="res://assets/pickups/resources/Pickup_Boost_SFX.tscn" type="PackedScene" id=3]
+
+[resource]
+resource_name = "Boost"
+script = ExtResource( 1 )
+texture = ExtResource( 2 )
+scene = ExtResource( 3 )
+position_bias = 8
+use_logic = "character.boost_forward(140.0)
+character.add_scene(scene, 1.2)"

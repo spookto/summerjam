@@ -1,0 +1,17 @@
+[gd_resource type="Resource" load_steps=9 format=2]
+
+[ext_resource path="res://assets/characters/biker/CharacterBiker.tres" type="Resource" id=1]
+[ext_resource path="res://assets/maps/StoryStageResource.gd" type="Script" id=2]
+[ext_resource path="res://assets/characters/testcharacter/CharacterBird.tres" type="Resource" id=3]
+[ext_resource path="res://assets/maps/beach/MapBeach.tres" type="Resource" id=4]
+[ext_resource path="res://assets/characters/biker_alt/CharacterBikerAlt.tres" type="Resource" id=5]
+[ext_resource path="res://assets/characters/skull/CharacterSkull.tres" type="Resource" id=6]
+[ext_resource path="res://assets/characters/ninja/CharacterNinja.tres" type="Resource" id=7]
+[ext_resource path="res://assets/characters/smile/CharacterSmile.tres" type="Resource" id=8]
+
+[resource]
+script = ExtResource( 2 )
+map_resource = ExtResource( 4 )
+player_character = ExtResource( 3 )
+cpu_characters = [ ExtResource( 1 ), ExtResource( 5 ), ExtResource( 7 ), ExtResource( 6 ), ExtResource( 8 ) ]
+lap_count = 3

@@ -1,0 +1,137 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://assets/characters/CharacterSpawn.gd" type="Script" id=1]
+[ext_resource path="res://assets/maps/Track.gd" type="Script" id=2]
+[ext_resource path="res://assets/pickups/resources/Pickup_Shield.tres" type="Resource" id=6]
+[ext_resource path="res://assets/maps/material_testmap_psx.tres" type="Material" id=7]
+[ext_resource path="res://assets/pickups/resources/_Pickup_Troll.tres" type="Resource" id=9]
+[ext_resource path="res://assets/maps/blocky/map_blocky.glb" type="PackedScene" id=10]
+[ext_resource path="res://assets/pickups/resources/Pickup_Boost.tres" type="Resource" id=11]
+[ext_resource path="res://assets/pickups/Pickup.tscn" type="PackedScene" id=13]
+
+[node name="Spatial" type="Spatial"]
+
+[node name="map_blocky" parent="." instance=ExtResource( 10 )]
+
+[node name="Track" parent="map_blocky" index="0"]
+material_override = ExtResource( 7 )
+
+[node name="Track" type="Spatial" parent="."]
+script = ExtResource( 2 )
+
+[node name="TrackPoint1" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 82, 0 )
+
+[node name="TrackPoint2" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 82, -104 )
+
+[node name="TrackPoint3" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -344 )
+
+[node name="TrackPoint4" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 104, 0, -339 )
+
+[node name="TrackPoint5" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 98, 0, -465 )
+
+[node name="TrackPoint6" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 0, -560 )
+
+[node name="TrackPoint7" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 334, 0, -556 )
+
+[node name="TrackPoint8" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 332, 0, -333 )
+
+[node name="TrackPoint9" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 432, 0, -237 )
+
+[node name="TrackPoint10" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 431, 40, 114 )
+
+[node name="TrackPoint11" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 106, 80, 106 )
+
+[node name="TrackPoint12" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 80, 428 )
+
+[node name="TrackPoint13" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 80, 417 )
+
+[node name="TrackPoint14" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 80, 372 )
+
+[node name="Pickups" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -260 )
+
+[node name="Pickup" parent="Pickups" instance=ExtResource( 13 )]
+
+[node name="Pickup5" parent="Pickups" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0 )
+keep_random = true
+
+[node name="Pickup2" parent="Pickups" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup3" parent="Pickups" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0 )
+fixed_resource = ExtResource( 11 )
+
+[node name="Pickup4" parent="Pickups" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 0 )
+fixed_resource = ExtResource( 6 )
+
+[node name="Pickups2" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 80, -98 )
+
+[node name="Pickup" parent="Pickups2" instance=ExtResource( 13 )]
+keep_random = true
+
+[node name="Pickup5" parent="Pickups2" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0 )
+keep_random = true
+
+[node name="Pickup2" parent="Pickups2" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0 )
+keep_random = true
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup3" parent="Pickups2" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0 )
+keep_random = true
+fixed_resource = ExtResource( 11 )
+
+[node name="Pickup4" parent="Pickups2" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 0 )
+keep_random = true
+fixed_resource = ExtResource( 6 )
+
+[node name="Spawns" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 80, 0 )
+
+[node name="CharacterSpawn" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 12 )
+script = ExtResource( 1 )
+
+[node name="CharacterSpawn2" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 12 )
+script = ExtResource( 1 )
+
+[node name="CharacterSpawn3" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 6 )
+script = ExtResource( 1 )
+
+[node name="CharacterSpawn4" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 6 )
+script = ExtResource( 1 )
+
+[node name="CharacterSpawn5" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0 )
+script = ExtResource( 1 )
+
+[node name="CharacterSpawn6" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0 )
+script = ExtResource( 1 )
+
+[editable path="map_blocky"]

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=5 format=2]
+
+[ext_resource path="res://assets/maps/map_resource.gd" type="Script" id=1]
+[ext_resource path="res://assets/maps/desert/map_desert.png" type="Texture" id=2]
+[ext_resource path="res://assets/maps/desert/MapDesert.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/maps/desert/map_desert_preview.png" type="Texture" id=4]
+
+[resource]
+script = ExtResource( 1 )
+name = "Ruins"
+scene = ExtResource( 3 )
+preview = ExtResource( 4 )
+minimap = ExtResource( 2 )

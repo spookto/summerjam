@@ -1,0 +1,128 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://assets/props/Boostpad.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/maps/Track.gd" type="Script" id=2]
+[ext_resource path="res://assets/pickups/resources/Pickup_Lightning.tres" type="Resource" id=3]
+[ext_resource path="res://assets/maps/test/test_mapmodel.glb" type="PackedScene" id=5]
+[ext_resource path="res://assets/pickups/resources/Pickup_Shield.tres" type="Resource" id=6]
+[ext_resource path="res://assets/characters/CharacterSpawn.gd" type="Script" id=7]
+[ext_resource path="res://assets/pickups/resources/_Pickup_Troll.tres" type="Resource" id=8]
+[ext_resource path="res://assets/pickups/resources/Pickup_Boost.tres" type="Resource" id=10]
+[ext_resource path="res://assets/maps/material_testmap.tres" type="Material" id=11]
+[ext_resource path="res://assets/pickups/Pickup.tscn" type="PackedScene" id=13]
+
+[node name="Spatial" type="Spatial"]
+
+[node name="test_mapmodel" parent="." instance=ExtResource( 5 )]
+pause_mode = 1
+
+[node name="Plane" parent="test_mapmodel" index="0"]
+material_override = ExtResource( 11 )
+
+[node name="Track" type="Spatial" parent="."]
+script = ExtResource( 2 )
+
+[node name="TrackPoint1" type="Position3D" parent="Track"]
+
+[node name="TrackPoint2" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -106 )
+
+[node name="TrackPoint3" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 89, 0, -122 )
+
+[node name="TrackPoint4" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 179, 0, -109 )
+
+[node name="TrackPoint5" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 197, 0, -62 )
+
+[node name="TrackPoint6" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 191, 0, -9 )
+
+[node name="TrackPoint7" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 120, 0, 68 )
+
+[node name="TrackPoint8" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 120, 0, 320 )
+
+[node name="TrackPoint9" type="Position3D" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 320 )
+
+[node name="Pickups" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -42 )
+
+[node name="Pickup" parent="Pickups" instance=ExtResource( 13 )]
+
+[node name="Pickup5" parent="Pickups" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0 )
+keep_random = true
+
+[node name="Pickup2" parent="Pickups" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0 )
+fixed_resource = ExtResource( 3 )
+
+[node name="Pickup3" parent="Pickups" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0 )
+fixed_resource = ExtResource( 10 )
+
+[node name="Pickup4" parent="Pickups" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 0 )
+fixed_resource = ExtResource( 6 )
+
+[node name="Pickups2" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 120, 0, 134 )
+
+[node name="Pickup" parent="Pickups2" instance=ExtResource( 13 )]
+keep_random = true
+
+[node name="Pickup5" parent="Pickups2" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0 )
+keep_random = true
+
+[node name="Pickup2" parent="Pickups2" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0 )
+keep_random = true
+fixed_resource = ExtResource( 8 )
+
+[node name="Pickup3" parent="Pickups2" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0 )
+keep_random = true
+fixed_resource = ExtResource( 10 )
+
+[node name="Pickup4" parent="Pickups2" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 0 )
+keep_random = true
+fixed_resource = ExtResource( 6 )
+
+[node name="Spatial" type="Spatial" parent="."]
+
+[node name="Spawns" type="Spatial" parent="."]
+
+[node name="CharacterSpawn" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 12 )
+script = ExtResource( 7 )
+
+[node name="CharacterSpawn2" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 12 )
+script = ExtResource( 7 )
+
+[node name="CharacterSpawn3" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 6 )
+script = ExtResource( 7 )
+
+[node name="CharacterSpawn4" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 6 )
+script = ExtResource( 7 )
+
+[node name="CharacterSpawn5" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0 )
+script = ExtResource( 7 )
+
+[node name="CharacterSpawn6" type="Spatial" parent="Spawns"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0 )
+script = ExtResource( 7 )
+
+[node name="Boostpad" parent="." instance=ExtResource( 1 )]
+transform = Transform( -0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, -0.939693, 198, 0, -47 )
+
+[editable path="test_mapmodel"]

@@ -1,0 +1,580 @@
+[gd_scene load_steps=44 format=2]
+
+[ext_resource path="res://assets/characters/CharacterBase.gd" type="Script" id=1]
+[ext_resource path="res://assets/effects/BlobShadow.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/characters/biker/CharacterBikerFrames.tres" type="SpriteFrames" id=3]
+[ext_resource path="res://assets/characters/CharacterSprite.gd" type="Script" id=4]
+[ext_resource path="res://assets/characters/DriftParticles.gd" type="Script" id=5]
+[ext_resource path="res://assets/characters/biker/CharacterBiker.tres" type="Resource" id=6]
+[ext_resource path="res://audio/qubodup-crash.ogg" type="AudioStream" id=7]
+[ext_resource path="res://audio/motor.wav" type="AudioStream" id=8]
+[ext_resource path="res://audio/airvent-large-loop.wav" type="AudioStream" id=9]
+[ext_resource path="res://audio/boostalt3.wav" type="AudioStream" id=10]
+[ext_resource path="res://assets/characters/vfx_dash.png" type="Texture" id=11]
+[ext_resource path="res://assets/characters/vfx_boost.png" type="Texture" id=12]
+[ext_resource path="res://assets/characters/vfx_dash_spark.png" type="Texture" id=13]
+[ext_resource path="res://assets/effects/water_splash.png" type="Texture" id=14]
+[ext_resource path="res://assets/pickups/PickupStack.gd" type="Script" id=15]
+[ext_resource path="res://audio/splash.wav" type="AudioStream" id=16]
+[ext_resource path="res://audio/jumppad.wav" type="AudioStream" id=17]
+
+[sub_resource type="SphereShape" id=2]
+
+[sub_resource type="SpatialMaterial" id=9]
+flags_unshaded = true
+flags_do_not_receive_shadows = true
+flags_disable_ambient_light = true
+vertex_color_use_as_albedo = true
+params_specular_mode = 4
+params_blend_mode = 1
+params_cull_mode = 2
+
+[sub_resource type="QuadMesh" id=10]
+material = SubResource( 9 )
+size = Vector2( 0.1, 1 )
+
+[sub_resource type="Curve" id=11]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), -2.24405, 0.0, 0, 0 ]
+
+[sub_resource type="Gradient" id=12]
+colors = PoolColorArray( 1, 1, 1, 1, 0, 0, 0, 1 )
+
+[sub_resource type="SpatialMaterial" id=24]
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+params_blend_mode = 1
+params_billboard_mode = 1
+albedo_color = Color( 1.3, 1.3, 1.3, 1 )
+albedo_texture = ExtResource( 11 )
+
+[sub_resource type="AtlasTexture" id=27]
+atlas = ExtResource( 11 )
+region = Rect2( 0, 32, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=28]
+atlas = ExtResource( 11 )
+region = Rect2( 32, 32, 32, 32 )
+
+[sub_resource type="SpriteFrames" id=23]
+animations = [ {
+"frames": [ SubResource( 27 ), SubResource( 28 ) ],
+"loop": true,
+"name": "default",
+"speed": 12.0
+} ]
+
+[sub_resource type="GDScript" id=29]
+script/source = "#DriftVFX
+extends AnimatedSprite3D
+
+const X_OFFSET: float = 32.0 * 0.125
+const MSEC_TO_SEC: float = 1.0 / 1000.0
+const UPDATE_FREQUENCY: float = 0.25
+
+onready var drift_sparks: CPUParticles = $DriftSparks
+
+var character: CharacterBase = null
+
+var _lvl3_time: float = -1.0
+var _lvl3_h: float = 0.0
+var _time: float = 0.0
+
+const COLOR_LVL1: Color = Color.yellow
+const COLOR_LVL2: Color = Color.springgreen
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	character = get_owner() as CharacterBase
+	if !is_instance_valid(character):
+		queue_free()
+		print(\"DriftVFX is not owned by CharacterBase\")
+		return
+	
+	character.connect(\"drift_level_changed\", self, \"_show_particles\")
+	_show_particles(0)
+	play(\"default\")
+
+
+func _process(delta: float) -> void:
+	if _lvl3_time < 0.0:
+		_time = 0.0
+		_lvl3_h = 0.0
+		set_process(false)
+		return
+	
+	if _time < UPDATE_FREQUENCY:
+		_time += delta
+		return
+	
+	_time = 0.0
+	
+	_lvl3_h = wrapf(_lvl3_h + UPDATE_FREQUENCY, 0.0, 1.0)
+	_set_drift_color(Color.from_hsv(_lvl3_h, 1.0, 1.0))
+
+
+func _show_particles(level: int) -> void:
+	_lvl3_time = -1.0
+	var offset: float = 1.5
+	
+	match level:
+		0:
+			hide()
+			return
+		1:
+			drift_sparks.restart()
+			drift_sparks.amount = 4
+			_set_drift_color(COLOR_LVL1)
+			pixel_size = 0.07
+			offset *= 0.6
+		2:
+			drift_sparks.amount = 6
+			_set_drift_color(COLOR_LVL2)
+			pixel_size = 0.09
+			offset *= 0.8
+		3:
+			drift_sparks.amount = 9
+			_lvl3_time = Time.get_ticks_msec() * MSEC_TO_SEC
+			_set_drift_color(Color.from_hsv(0.0, 1.0, 1.0))
+			set_process(true)
+			pixel_size = 0.125
+	
+	var dir: int = int(-sign(character.drift_direction))
+	flip_h = character.drift_direction > 0
+	position.x = offset * dir
+	
+	drift_sparks.direction.x = abs(drift_sparks.direction.x) * dir
+	
+	show()
+
+
+func _set_drift_color(color: Color) -> void:
+	modulate = color
+	drift_sparks.color = color
+"
+
+[sub_resource type="SpatialMaterial" id=33]
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+params_blend_mode = 1
+params_billboard_mode = 3
+params_billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_color = Color( 1, 0.81496, 0.730469, 1 )
+albedo_texture = ExtResource( 13 )
+
+[sub_resource type="QuadMesh" id=34]
+material = SubResource( 33 )
+
+[sub_resource type="Curve" id=35]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), -2.76818, 0.0, 0, 0 ]
+
+[sub_resource type="SpatialMaterial" id=30]
+flags_transparent = true
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource( 12 )
+
+[sub_resource type="PlaneMesh" id=31]
+material = SubResource( 30 )
+
+[sub_resource type="GDScript" id=32]
+script/source = "#BoostVFX
+extends CPUParticles
+
+var character: CharacterBase = null
+var _emit_velocity: float = 0.0
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	character = get_owner() as CharacterBase
+	if !is_instance_valid(character):
+		queue_free()
+		print(\"BoostVFX is not owned by CharacterBase\")
+		return
+	
+	var a: float = character.acceleration + 10.0
+	_emit_velocity = a * a
+
+
+func _process(_delta: float) -> void:
+	if Engine.get_idle_frames() % 3 != 0:
+		return
+	
+	emitting = character.velocity.length_squared() > _emit_velocity
+	
+"
+
+[sub_resource type="SpatialMaterial" id=13]
+flags_unshaded = true
+flags_do_not_receive_shadows = true
+flags_disable_ambient_light = true
+vertex_color_use_as_albedo = true
+params_specular_mode = 4
+params_blend_mode = 1
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_color = Color( 0.35, 0.35, 0.35, 1 )
+albedo_texture = ExtResource( 14 )
+
+[sub_resource type="QuadMesh" id=14]
+material = SubResource( 13 )
+size = Vector2( 4, 4 )
+
+[sub_resource type="Gradient" id=15]
+offsets = PoolRealArray( 0.2, 1 )
+colors = PoolColorArray( 1, 1, 1, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GDScript" id=16]
+script/source = "extends CPUParticles
+
+var _floored: bool = false
+
+func _process(_delta: float):
+	if Engine.get_idle_frames() % 3 != 0:
+		return
+	emitting = _floored && owner.get(\"velocity\").length_squared() > 100
+
+func _on_CharacterBase_floored_changed(floored: bool) -> void:
+	_floored = floored
+
+
+func _on_CharacterBase_floor_bounced(velocity_y: float):
+	var volume_mix: float = clamp(velocity_y / 24.0, 0.0, 1.0)
+	$SplashSFX.unit_db = lerp(-8.0, 0.0, volume_mix)
+	print($SplashSFX.unit_db)
+	$SplashSFX.play()
+	$SplashParticles.emitting = true
+"
+
+[sub_resource type="Curve" id=17]
+_data = [ Vector2( 0, 0.515909 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="AudioStreamRandomPitch" id=18]
+audio_stream = ExtResource( 16 )
+random_pitch = 1.2
+
+[sub_resource type="GDScript" id=20]
+script/source = "# MotorSFX
+extends AudioStreamPlayer3D
+
+onready var owning_character: CharacterBase = owner as CharacterBase
+
+
+func _ready() -> void:
+	set_motor_pitch(0.0)
+	seek(rand_range(0.0, 1.0))
+	
+	position = PlayerCamera.OFFSET_UP
+	position.z += PlayerCamera.OFFSET_BACK
+
+
+func _process(_delta: float) -> void:
+	if Engine.get_idle_frames() % 3 != 0:
+		return
+	
+	var pitch: float = owning_character.velocity.length() / owning_character.acceleration
+	if pitch > 1.0:
+		pitch = range_lerp(pitch, 1.0, 2.0, 1.0, 1.6)
+	
+	set_motor_pitch(pitch)
+
+
+func set_motor_pitch(value: float) -> void:
+	pitch_scale = clamp(value, 0.001, 1.2)
+"
+
+[sub_resource type="GDScript" id=21]
+script/source = "# MotorSFX
+extends AudioStreamPlayer3D
+
+const PITCH_MIN: float = 4.0
+const PITCH_MAX: float = 5.0
+const PITCH_WIDTH: float = 0.3
+
+onready var owning_character: CharacterBase = owner as CharacterBase
+onready var drift_release_sfx: AudioStreamPlayer3D = $DriftReleaseSFX
+onready var drift_change_sfx: AudioStreamPlayer3D = $DriftChangeSFX
+
+
+var _pitch_center: float = 5.0
+var _last_level: int = 0
+
+func _ready() -> void:
+	owning_character.connect(\"drift_level_changed\", self, \"_on_character_drift_level_changed\")
+	_on_character_drift_level_changed(0)
+
+
+func _process(_delta: float) -> void:
+	if !playing || Engine.get_idle_frames() % 3 != 0:
+		return
+	
+	var pitch: float = range_lerp(-owning_character.input_source.steer, -1.0, 1.0, _pitch_center - PITCH_WIDTH, _pitch_center + PITCH_WIDTH)
+	pitch_scale = pitch
+	
+	if !drift_change_sfx.playing && _last_level > 2:
+		drift_change_sfx.play()
+
+
+func _on_character_drift_level_changed(level: int) -> void:
+	if level <= 0:
+		if owning_character.velocity.length_squared() > 100.0:
+			drift_release_sfx.unit_db = (_last_level - 2) * 4
+			drift_release_sfx.play()
+		stop()
+		_last_level = level
+		return
+	else:
+		drift_change_sfx.max_db = 0.0 if level > 1 else -12.0
+		drift_change_sfx.pitch_scale = max(level * 0.8, 1.2)
+		drift_change_sfx.play()
+		if !playing:
+			play(rand_range(0.0, 10.0))
+	
+	
+	_last_level = level
+	_pitch_center = range_lerp(level, 1.0, 3.0, PITCH_MIN, PITCH_MAX)
+"
+
+[sub_resource type="AudioStreamRandomPitch" id=22]
+audio_stream = ExtResource( 10 )
+random_pitch = 1.05
+
+[sub_resource type="AudioStreamRandomPitch" id=19]
+audio_stream = ExtResource( 7 )
+
+[node name="CharacterBase" type="KinematicBody"]
+collision_layer = 2
+script = ExtResource( 1 )
+character_resource = ExtResource( 6 )
+drift_impulse_1 = 57.0
+drift_steering = 16.0
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+shape = SubResource( 2 )
+
+[node name="Sprite" type="AnimatedSprite3D" parent="."]
+process_priority = 10
+portal_mode = 4
+sorting_offset = 10.0
+cast_shadow = 0
+offset = Vector2( 0, 16 )
+pixel_size = 0.0625
+billboard = 1
+alpha_cut = 1
+frames = ExtResource( 3 )
+playing = true
+script = ExtResource( 4 )
+
+[node name="JumpRay" type="RayCast" parent="Sprite"]
+unique_name_in_owner = true
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0 )
+enabled = true
+
+[node name="BlobShadow" parent="Sprite" instance=ExtResource( 2 )]
+shadow_size = 2.5
+
+[node name="DriftParticles" type="Spatial" parent="Sprite"]
+visible = false
+script = ExtResource( 5 )
+
+[node name="BoostLVL1" type="CPUParticles" parent="Sprite/DriftParticles"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0932332, 1.15377 )
+visible = false
+sorting_offset = 2.0
+amount = 16
+lifetime = 0.3
+mesh = SubResource( 10 )
+flag_align_y = true
+direction = Vector3( 0, 0, 1 )
+spread = 40.0
+initial_velocity = 4.0
+scale_amount_curve = SubResource( 11 )
+color_ramp = SubResource( 12 )
+
+[node name="BoostLVL2" type="CPUParticles" parent="Sprite/DriftParticles"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0932332, 1.15377 )
+visible = false
+sorting_offset = 2.0
+amount = 20
+lifetime = 0.4
+mesh = SubResource( 10 )
+flag_align_y = true
+direction = Vector3( 0, 0, 1 )
+spread = 40.0
+initial_velocity = 4.0
+scale_amount_curve = SubResource( 11 )
+color = Color( 0, 0.882353, 1, 1 )
+color_ramp = SubResource( 12 )
+
+[node name="BoostLVL3" type="CPUParticles" parent="Sprite/DriftParticles"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0932332, 1.15377 )
+visible = false
+sorting_offset = 2.0
+amount = 32
+lifetime = 0.6
+mesh = SubResource( 10 )
+flag_align_y = true
+direction = Vector3( 0, 0, 1 )
+spread = 40.0
+initial_velocity = 4.0
+scale_amount_curve = SubResource( 11 )
+color = Color( 1, 0, 0.796078, 1 )
+color_ramp = SubResource( 12 )
+
+[node name="DriftVFX" type="AnimatedSprite3D" parent="Sprite"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 1 )
+visible = false
+material_override = SubResource( 24 )
+cast_shadow = 0
+generate_lightmap = false
+offset = Vector2( 0, 12 )
+pixel_size = 0.125
+transparent = false
+double_sided = false
+frames = SubResource( 23 )
+playing = true
+script = SubResource( 29 )
+
+[node name="DriftSparks" type="CPUParticles" parent="Sprite/DriftVFX"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, -2 )
+amount = 5
+lifetime = 0.4
+mesh = SubResource( 34 )
+emission_shape = 1
+emission_sphere_radius = 2.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 5.0
+angle = 720.0
+angle_random = 1.0
+scale_amount_curve = SubResource( 35 )
+
+[node name="BoostVFX" type="CPUParticles" parent="Sprite"]
+transform = Transform( 1, 0, 0, 0, 0.927184, -0.374607, 0, 0.374607, 0.927184, 0, 1.5, -3 )
+emitting = false
+amount = 4
+lifetime = 0.4
+local_coords = false
+mesh = SubResource( 31 )
+emission_shape = 2
+emission_box_extents = Vector3( 3, 0.5, 0.1 )
+flag_rotate_y = true
+direction = Vector3( 0, -0.383, -0.924 )
+spread = 0.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 8.0
+script = SubResource( 32 )
+
+[node name="WaterParticles" type="CPUParticles" parent="Sprite"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0 )
+amount = 3
+lifetime = 0.2
+local_coords = false
+mesh = SubResource( 14 )
+emission_shape = 1
+emission_sphere_radius = 0.2
+gravity = Vector3( 0, -16, 0 )
+angle = 720.0
+angle_random = 1.0
+color_ramp = SubResource( 15 )
+script = SubResource( 16 )
+
+[node name="SplashParticles" type="CPUParticles" parent="Sprite/WaterParticles"]
+emitting = false
+amount = 3
+lifetime = 0.2
+one_shot = true
+local_coords = false
+mesh = SubResource( 14 )
+emission_shape = 1
+emission_sphere_radius = 0.2
+gravity = Vector3( 0, 64, 0 )
+angle = 720.0
+angle_random = 1.0
+scale_amount = 2.0
+scale_amount_curve = SubResource( 17 )
+color_ramp = SubResource( 15 )
+
+[node name="SplashSFX" type="AudioStreamPlayer3D" parent="Sprite/WaterParticles"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4 )
+stream = SubResource( 18 )
+attenuation_model = 3
+unit_size = 100.0
+pitch_scale = 1.2
+max_distance = 25.0
+panning_strength = 0.0
+bus = "SFX"
+attenuation_filter_db = -12.0
+
+[node name="PickupStack" type="Spatial" parent="Sprite"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
+script = ExtResource( 15 )
+
+[node name="MotorSFX" type="AudioStreamPlayer3D" parent="Sprite"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 10 )
+stream = ExtResource( 8 )
+attenuation_model = 3
+unit_db = 5.0
+unit_size = 100.0
+max_db = -8.0
+autoplay = true
+max_distance = 15.0
+panning_strength = 0.2
+bus = "SFX"
+attenuation_filter_cutoff_hz = 20500.0
+attenuation_filter_db = 0.0
+script = SubResource( 20 )
+
+[node name="DriftSFX" type="AudioStreamPlayer3D" parent="Sprite"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 8 )
+stream = ExtResource( 9 )
+attenuation_model = 3
+unit_db = 5.0
+unit_size = 100.0
+max_db = -5.0
+pitch_scale = 4.0
+max_distance = 20.0
+bus = "SFX"
+attenuation_filter_cutoff_hz = 20500.0
+attenuation_filter_db = 0.0
+script = SubResource( 21 )
+
+[node name="DriftReleaseSFX" type="AudioStreamPlayer3D" parent="Sprite/DriftSFX"]
+stream = SubResource( 22 )
+attenuation_model = 3
+unit_size = 100.0
+pitch_scale = 1.6
+max_distance = 20.0
+bus = "SFX"
+attenuation_filter_cutoff_hz = 20500.0
+attenuation_filter_db = 0.0
+
+[node name="DriftChangeSFX" type="AudioStreamPlayer3D" parent="Sprite/DriftSFX"]
+stream = ExtResource( 17 )
+attenuation_model = 3
+unit_db = 10.0
+unit_size = 100.0
+pitch_scale = 2.0
+max_distance = 15.0
+bus = "SFX"
+attenuation_filter_cutoff_hz = 20500.0
+attenuation_filter_db = 0.0
+
+[node name="CollideSFX" type="AudioStreamPlayer3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0 )
+stream = SubResource( 19 )
+attenuation_model = 3
+max_distance = 20.0
+out_of_range_mode = 1
+bus = "SFX"
+attenuation_filter_cutoff_hz = 20500.0
+attenuation_filter_db = 0.0
+
+[connection signal="floor_bounced" from="." to="Sprite/WaterParticles" method="_on_CharacterBase_floor_bounced"]
+[connection signal="floored_changed" from="." to="Sprite/WaterParticles" method="_on_CharacterBase_floored_changed"]
+[connection signal="wall_collided" from="." to="CollideSFX" method="play"]
+[connection signal="ready" from="Sprite/WaterParticles" to="Sprite/WaterParticles" method="restart"]

@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://audio/boostalt3.wav" type="AudioStream" id=1]
+
+[node name="BoostSFX" type="AudioStreamPlayer3D"]
+stream = ExtResource( 1 )
+attenuation_model = 3
+unit_size = 100.0
+autoplay = true
+max_distance = 60.0
+bus = "SFX"
+attenuation_filter_cutoff_hz = 20500.0
+attenuation_filter_db = 0.0

@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://assets/props/boostpad.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://assets/props/Boostpad.gd" type="Script" id=2]
+[ext_resource path="res://assets/props/Boostpad.material" type="Material" id=3]
+[ext_resource path="res://audio/boostalt3.wav" type="AudioStream" id=4]
+
+[sub_resource type="BoxShape" id=1]
+extents = Vector3( 8, 2, 8 )
+
+[node name="Boostpad" type="Area"]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource( 2 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+material_override = ExtResource( 3 )
+mesh = ExtResource( 1 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+shape = SubResource( 1 )
+
+[node name="BoostSFX" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 4 )
+attenuation_model = 3
+unit_size = 100.0
+max_distance = 60.0
+bus = "SFX"
+attenuation_filter_cutoff_hz = 20500.0
+attenuation_filter_db = 0.0
+
+[connection signal="boosted" from="." to="BoostSFX" method="play"]

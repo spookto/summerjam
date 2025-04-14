@@ -1,0 +1,419 @@
+[gd_scene load_steps=30 format=2]
+
+[ext_resource path="res://assets/maps/tutorial/MapTutorial.tres" type="Resource" id=1]
+[ext_resource path="res://assets/maps/tutorial/MapTutorial.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/menus/InputTextureRect.gd" type="Script" id=3]
+[ext_resource path="res://assets/characters/testcharacter/CharacterBird.tres" type="Resource" id=4]
+[ext_resource path="res://assets/menus/main_menu/textures/bumper_prompts.png" type="Texture" id=5]
+[ext_resource path="res://assets/pickups/Pickup.tscn" type="PackedScene" id=6]
+[ext_resource path="res://assets/menus/main_menu/textures/back_prompts.png" type="Texture" id=7]
+[ext_resource path="res://assets/menus/main_menu/textures/arrow.png" type="Texture" id=8]
+[ext_resource path="res://assets/pickups/resources/Pickup_Boost.tres" type="Resource" id=9]
+[ext_resource path="res://assets/menus/main_menu/textures/pickup_prompts.png" type="Texture" id=10]
+[ext_resource path="res://assets/maps/StoryStageResource.gd" type="Script" id=11]
+[ext_resource path="res://assets/maps/StoryStage.gd" type="Script" id=12]
+
+[sub_resource type="Resource" id=18]
+script = ExtResource( 11 )
+map_resource = ExtResource( 1 )
+player_character = ExtResource( 4 )
+cpu_characters = [  ]
+lap_count = 1
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Area
+
+export var action: String = \"brake\"
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pause_mode = PAUSE_MODE_PROCESS
+	
+	connect(\"body_entered\", self, \"_on_body_entered\")
+	set_process_input(false)
+	$CanvasLayer.hide()
+
+
+func _on_body_entered(_body: Node) -> void:
+	get_tree().paused = true
+	set_process_input(true)
+	$CanvasLayer.show()
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(action):
+		get_tree().paused = false
+		queue_free()
+"
+
+[sub_resource type="BoxShape" id=2]
+extents = Vector3( 32, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 5 )
+region = Rect2( 0, 0, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 5 )
+region = Rect2( 32, 0, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 5 )
+region = Rect2( 64, 0, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 5 )
+region = Rect2( 96, 0, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 7 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 7 )
+region = Rect2( 16, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=10]
+atlas = ExtResource( 7 )
+region = Rect2( 32, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=11]
+atlas = ExtResource( 7 )
+region = Rect2( 48, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=16]
+atlas = ExtResource( 10 )
+region = Rect2( 0, 32, 32, 16 )
+
+[sub_resource type="AtlasTexture" id=17]
+atlas = ExtResource( 10 )
+region = Rect2( 32, 32, 32, 16 )
+
+[sub_resource type="AtlasTexture" id=12]
+atlas = ExtResource( 10 )
+region = Rect2( 0, 0, 32, 16 )
+
+[sub_resource type="AtlasTexture" id=13]
+atlas = ExtResource( 10 )
+region = Rect2( 32, 0, 32, 16 )
+
+[sub_resource type="AtlasTexture" id=14]
+atlas = ExtResource( 10 )
+region = Rect2( 0, 16, 32, 16 )
+
+[sub_resource type="AtlasTexture" id=15]
+atlas = ExtResource( 10 )
+region = Rect2( 32, 16, 32, 16 )
+
+[node name="MapTutorialStory" type="Node"]
+script = ExtResource( 12 )
+quick_apply = true
+stage_resource = SubResource( 18 )
+
+[node name="MapTutorial" parent="." instance=ExtResource( 2 )]
+
+[node name="Pickups" parent="MapTutorial" index="3"]
+visible = false
+
+[node name="Pickups2" parent="MapTutorial" index="4"]
+visible = false
+
+[node name="Pickup" parent="MapTutorial/Pickups2" index="0"]
+keep_random = false
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup5" parent="MapTutorial/Pickups2" index="1"]
+keep_random = false
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup2" parent="MapTutorial/Pickups2" index="2"]
+keep_random = false
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup3" parent="MapTutorial/Pickups2" index="3"]
+keep_random = false
+
+[node name="Pickup4" parent="MapTutorial/Pickups2" index="4"]
+keep_random = false
+fixed_resource = ExtResource( 9 )
+
+[node name="DriftArea" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -63 )
+collision_layer = 0
+collision_mask = 2
+script = SubResource( 3 )
+
+[node name="CollisionShape" type="CollisionShape" parent="DriftArea"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -19 )
+shape = SubResource( 2 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="DriftArea"]
+
+[node name="CenterContainer" type="CenterContainer" parent="DriftArea/CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="ColorRect" parent="DriftArea/CanvasLayer/CenterContainer"]
+margin_left = 60.0
+margin_top = 72.0
+margin_right = 260.0
+margin_bottom = 168.0
+rect_min_size = Vector2( 200, 96 )
+color = Color( 0, 0, 0, 0.392157 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DriftArea/CanvasLayer/CenterContainer/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 128, 64 )
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Label" type="Label" parent="DriftArea/CanvasLayer/CenterContainer/Panel/VBoxContainer"]
+margin_right = 200.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Drifting gives a boost
+Longer drifts = Longer boost"
+align = 1
+valign = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="DriftArea/CanvasLayer/CenterContainer/Panel/VBoxContainer"]
+margin_top = 50.0
+margin_right = 200.0
+margin_bottom = 96.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 2
+
+[node name="TextureRect" type="TextureRect" parent="DriftArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_right = 37.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+stretch_mode = 4
+script = ExtResource( 3 )
+input_action = "brake"
+texture_released = SubResource( 4 )
+texture_pressed = SubResource( 5 )
+repeat_animation = true
+
+[node name="Label" type="Label" parent="DriftArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_left = 39.0
+margin_top = 16.0
+margin_right = 52.0
+margin_bottom = 30.0
+text = "or"
+
+[node name="TextureRect2" type="TextureRect" parent="DriftArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_left = 54.0
+margin_right = 91.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+stretch_mode = 4
+script = ExtResource( 3 )
+input_action = "brake"
+texture_released = SubResource( 6 )
+texture_pressed = SubResource( 7 )
+repeat_animation = true
+
+[node name="Label2" type="Label" parent="DriftArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_left = 93.0
+margin_top = 16.0
+margin_right = 106.0
+margin_bottom = 30.0
+text = "or"
+
+[node name="TextureRect3" type="TextureRect" parent="DriftArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_left = 108.0
+margin_right = 145.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+stretch_mode = 4
+script = ExtResource( 3 )
+input_action = "brake"
+texture_released = SubResource( 8 )
+texture_pressed = SubResource( 9 )
+repeat_animation = true
+
+[node name="Label3" type="Label" parent="DriftArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_left = 147.0
+margin_top = 16.0
+margin_right = 160.0
+margin_bottom = 30.0
+text = "or"
+
+[node name="TextureRect4" type="TextureRect" parent="DriftArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_left = 162.0
+margin_right = 200.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+stretch_mode = 4
+script = ExtResource( 3 )
+input_action = "brake"
+texture_released = SubResource( 10 )
+texture_pressed = SubResource( 11 )
+repeat_animation = true
+
+[node name="BoostArea" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 120, 0, 152 )
+collision_layer = 0
+collision_mask = 2
+script = SubResource( 3 )
+action = "pickup_use"
+
+[node name="CollisionShape" type="CollisionShape" parent="BoostArea"]
+shape = SubResource( 2 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="BoostArea"]
+
+[node name="CenterContainer" type="CenterContainer" parent="BoostArea/CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="ColorRect" parent="BoostArea/CanvasLayer/CenterContainer"]
+margin_left = 32.0
+margin_top = 72.0
+margin_right = 288.0
+margin_bottom = 168.0
+rect_min_size = Vector2( 256, 96 )
+color = Color( 0, 0, 0, 0.392157 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BoostArea/CanvasLayer/CenterContainer/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 128, 64 )
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Label" type="Label" parent="BoostArea/CanvasLayer/CenterContainer/Panel/VBoxContainer"]
+margin_right = 256.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "You can hold up to 3 pickups at once
+Use them wisely"
+align = 1
+valign = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BoostArea/CanvasLayer/CenterContainer/Panel/VBoxContainer"]
+margin_top = 50.0
+margin_right = 256.0
+margin_bottom = 96.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 2
+
+[node name="TextureRect" type="TextureRect" parent="BoostArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_right = 74.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+stretch_mode = 4
+script = ExtResource( 3 )
+input_action = "pickup_use"
+texture_released = SubResource( 16 )
+texture_pressed = SubResource( 17 )
+repeat_animation = true
+
+[node name="Label" type="Label" parent="BoostArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_left = 76.0
+margin_top = 16.0
+margin_right = 89.0
+margin_bottom = 30.0
+text = "or"
+
+[node name="TextureRect2" type="TextureRect" parent="BoostArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_left = 91.0
+margin_right = 165.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+stretch_mode = 4
+script = ExtResource( 3 )
+input_action = "pickup_use"
+texture_released = SubResource( 12 )
+texture_pressed = SubResource( 13 )
+repeat_animation = true
+
+[node name="Label2" type="Label" parent="BoostArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_left = 167.0
+margin_top = 16.0
+margin_right = 180.0
+margin_bottom = 30.0
+text = "or"
+
+[node name="TextureRect3" type="TextureRect" parent="BoostArea/CanvasLayer/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+margin_left = 182.0
+margin_right = 256.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 8 )
+stretch_mode = 4
+script = ExtResource( 3 )
+input_action = "pickup_use"
+texture_released = SubResource( 14 )
+texture_pressed = SubResource( 15 )
+repeat_animation = true
+
+[node name="Pickups2" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 122, 0, 134 )
+
+[node name="Pickup" parent="Pickups2" instance=ExtResource( 6 )]
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup2" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup3" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup4" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup5" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup6" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup11" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup12" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup13" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup14" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup15" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[node name="Pickup16" parent="Pickups2" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0 )
+fixed_resource = ExtResource( 9 )
+
+[editable path="MapTutorial"]
